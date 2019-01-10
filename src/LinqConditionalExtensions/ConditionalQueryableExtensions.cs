@@ -8,22 +8,49 @@ namespace System.Linq
         public static IQueryable<T> If<T>(this IQueryable<T> source, bool condition, Func<IQueryable<T>, IQueryable<T>> expression)
             => condition ? expression.Invoke(source) : source;
 
-        public static IConditionalQueryable<TSource, TResult> IfChain<TSource, TResult>(this IQueryable<TSource> source, bool condition, Func<IQueryable<TSource>, IQueryable<TResult>> expression)
+        public static IConditionalQueryable<TSource> If<TSource>(this IConditionalQueryable<TSource> conditional, bool condition, Func<IQueryable<TSource>, IQueryable<TSource>> expression)
+            => condition ? new ConditionalQueryable<TSource>(conditional.Source, e => expression(conditional.Expression(e)), condition) : new ConditionalQueryable<TSource>(conditional.Source, expression, condition);
+
+        public static IConditionalQueryable<TSource> IfChain<TSource>(this IQueryable<TSource> source, bool condition, Func<IQueryable<TSource>, IQueryable<TSource>> expression)
+            => new ConditionalQueryable<TSource>(source, expression, condition);
+
+        public static IConditionalQueryable<TSource, TResult> IfChain<TSource, TResult>(this IQueryable<TSource> source, bool condition, Func<IQueryable<TSource>, TResult> expression)
             => new ConditionalQueryable<TSource, TResult>(source, expression, condition);
 
-        public static IConditionalQueryable<TSource, TResult> ElseIf<TSource, TResult>(this IConditionalQueryable<TSource, TResult> conditional, bool condition, Func<IQueryable<TSource>, IQueryable<TResult>> expression)
+        public static IConditionalQueryable<TSource> ElseIf<TSource>(this IConditionalQueryable<TSource> conditional, bool condition, Func<IQueryable<TSource>, IQueryable<TSource>> expression)
+            => conditional.IsMet ? conditional : new ConditionalQueryable<TSource>(conditional.Source, expression, condition);
+
+        public static IConditionalQueryable<TSource, TResult> ElseIf<TSource, TResult>(this IConditionalQueryable<TSource, TResult> conditional, bool condition, Func<IQueryable<TSource>, TResult> expression)
             => conditional.IsMet ? conditional : new ConditionalQueryable<TSource, TResult>(conditional.Source, expression, condition);
 
-        public static IQueryable<TResult> Else<TSource, TResult>(this IConditionalQueryable<TSource, TResult> conditional, Func<IQueryable<TSource>, IQueryable<TResult>> expression)
+        public static IQueryable<TSource> Else<TSource>(this IConditionalQueryable<TSource> conditional)
+            => conditional.IsMet ? conditional.Expression.Invoke(conditional.Source) : conditional.Source;
+
+        public static IQueryable<TSource> Else<TSource>(this IConditionalQueryable<TSource> conditional, Func<IQueryable<TSource>, IQueryable<TSource>> expression)
             => conditional.IsMet ? conditional.Expression.Invoke(conditional.Source) : expression.Invoke(conditional.Source);
+
+        public static TResult Else<TSource, TResult>(this IConditionalQueryable<TSource, TResult> conditional, Func<IQueryable<TSource>, TResult> expression)
+            => conditional.IsMet ? conditional.Expression.Invoke(conditional.Source) : expression.Invoke(conditional.Source);
+
+        public static ISwitchableQueryable<TSwitch, TSource> Switch<TSwitch, TSource>(this IQueryable<TSource> source, TSwitch @switch)
+            => new SwitchableQueryable<TSwitch, TSource>(source, @switch);
 
         public static ISwitchableQueryable<TSwitch, TSource, TResult> Switch<TSwitch, TSource, TResult>(this IQueryable<TSource> source, TSwitch @switch)
             => new SwitchableQueryable<TSwitch, TSource, TResult>(source, @switch);
 
-        public static ISwitchableQueryable<TSwitch, TSource, TResult> Case<TSwitch, TSource, TResult>(this ISwitchableQueryable<TSwitch, TSource, TResult> switchable, TSwitch match, Func<IQueryable<TSource>, IQueryable<TResult>> expression)
+        public static ISwitchableQueryable<TSwitch, TSource> Case<TSwitch, TSource>(this ISwitchableQueryable<TSwitch, TSource> switchable, TSwitch match, Func<IQueryable<TSource>, IQueryable<TSource>> expression)
+            => switchable.IsMet ? switchable : new SwitchableQueryable<TSwitch, TSource>(switchable.Source, switchable.Switch, expression, match.Equals(switchable.Switch));
+
+        public static ISwitchableQueryable<TSwitch, TSource, TResult> Case<TSwitch, TSource, TResult>(this ISwitchableQueryable<TSwitch, TSource, TResult> switchable, TSwitch match, Func<IQueryable<TSource>, TResult> expression)
             => switchable.IsMet ? switchable : new SwitchableQueryable<TSwitch, TSource, TResult>(switchable.Source, switchable.Switch, expression, match.Equals(switchable.Switch));
 
-        public static IQueryable<TResult> Default<TSwitch, TSource, TResult>(this ISwitchableQueryable<TSwitch, TSource, TResult> switchable, Func<IQueryable<TSource>, IQueryable<TResult>> expression)
+        public static IQueryable<TSource> Default<TSwitch, TSource>(this ISwitchableQueryable<TSwitch, TSource> switchable)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : switchable.Source;
+
+        public static IQueryable<TSource> Default<TSwitch, TSource>(this ISwitchableQueryable<TSwitch, TSource> switchable, Func<IQueryable<TSource>, IQueryable<TSource>> expression)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : expression.Invoke(switchable.Source);
+
+        public static TResult Default<TSwitch, TSource, TResult>(this ISwitchableQueryable<TSwitch, TSource, TResult> switchable, Func<IQueryable<TSource>, TResult> expression)
             => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : expression.Invoke(switchable.Source);
 
         public static IQueryable<TSource> ConcatIf<TSource>(this IQueryable<TSource> first, bool condition, IQueryable<TSource> second)

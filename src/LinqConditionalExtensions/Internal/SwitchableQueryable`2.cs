@@ -1,6 +1,6 @@
 ﻿namespace System.Linq
 {
-    internal class SwitchableQueryable<TSwitch, TSource, TResult> : ISwitchableQueryable<TSwitch, TSource, TResult>
+    internal class SwitchableQueryable<TSwitch, TSource> : ISwitchableQueryable<TSwitch, TSource>
     {
         public SwitchableQueryable(IQueryable<TSource> source, TSwitch @switch)
         {
@@ -10,7 +10,7 @@
             IsMet = false;
         }
 
-        public SwitchableQueryable(IQueryable<TSource> source, TSwitch @switch, Func<IQueryable<TSource>, IQueryable<TResult>> expression, bool isMet)
+        public SwitchableQueryable(IQueryable<TSource> source, TSwitch @switch, Func<IQueryable<TSource>, IQueryable<TSource>> expression, bool isMet)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Switch = @switch;
@@ -22,7 +22,7 @@
 
         public TSwitch Switch { get; }
 
-        public Func<IQueryable<TSource>, IQueryable<TResult>> Expression { get; }
+        public Func<IQueryable<TSource>, IQueryable<TSource>> Expression { get; }
 
         public bool IsMet { get; }
     }

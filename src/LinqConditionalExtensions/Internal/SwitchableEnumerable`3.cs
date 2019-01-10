@@ -12,7 +12,7 @@ namespace System.Linq
             IsMet = false;
         }
 
-        public SwitchableEnumerable(IEnumerable<TSource> source, TSwitch @switch, Func<IEnumerable<TSource>, IEnumerable<TResult>> expression, bool isMet)
+        public SwitchableEnumerable(IEnumerable<TSource> source, TSwitch @switch, Func<IEnumerable<TSource>, TResult> expression, bool isMet)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Switch = @switch;
@@ -24,7 +24,7 @@ namespace System.Linq
 
         public TSwitch Switch { get; }
 
-        public Func<IEnumerable<TSource>, IEnumerable<TResult>> Expression { get; }
+        public Func<IEnumerable<TSource>, TResult> Expression { get; }
 
         public bool IsMet { get; }
     }
