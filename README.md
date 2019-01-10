@@ -56,9 +56,6 @@ var subordinates = employeeDirectory
 In this sample, instead of returning the subordinates, we are just getting the count. You can do a transformation on the result. You just have to make sure each method in the chain returns the same type.
 
 ```csharp
-var position = "VP";
-var name = "Todd Skelton";
-
 var subordinateCount = employeeDirectory
 	.IfChain(position == "CEO", employees => employees.Count())
 	.ElseIf(position == "VP", employees => employees.Where(employee => employee.VicePresidentName == name).Count())
@@ -72,8 +69,6 @@ You can use a switch statement to chain together case statements. This is really
 In this example, a switch chain is being used to order results based on the column sort string.
 
 ```csharp
-var columnSort = "Name";
-
 var sortedResults = results
 	.Switch(columnSort)
 	.Case("Name", set => set.OrderBy(e => e.Name))
@@ -86,8 +81,6 @@ var sortedResults = results
 Since ordering is a common task, you can use the shorthand version with order by case. There is also a where case for quickly applying filters in a switch.
 
 ```csharp
-var columnSort = "Name";
-
 var sortedResults = results
     .Switch(columnSort)
     .OrderByCase("Name", e => e.Name)
@@ -102,8 +95,6 @@ You can also do a transformation in the switch chain, but you'll have to specify
 In this example, the types are string for the switch, Employee for the source, and int for the result.
 
 ```csharp
-var department = "IT";
-
 var total = employeeDirectory
 	.Switch<string, Employee, int>(department)
 	.Case("IT", set => set.Where(e => e.Department == "Information Technology").Count())
