@@ -12,6 +12,23 @@ These extensions make it easy to chain Linq expressions based on conditions—us
 `dotnet add package LinqConditionalExtensions`
 
 ## How to Use
+### Conditionals
+Any extension for `IEnumerable<T>` and `IQueryable<T>` that returns itself can be called with `If` appended to it and be conditionally applied.
+
+Here is a sample for applying where clauses conditionally based on filters, ordering by a column, and paging the results. When using something like Entity Framework, this entire chain will be dynamically converted straight to SQL and make your query time much shorter.
+```csharp
+var results = _context.Employees
+					  .WhereIf(!string.IsNullOrWhitespace(nameFilter), e => e.Name.Contains(nameFilter))
+					  .WhereIf(!string.IsNullOrWhitespace(positionFilter), e => e.Position.Contains(positionFilter))
+					  .WhereIf(!string.IsNullOrWhitespace(idFilter), e => e.Id == idFilter)
+					  .OrderByIf(columnSort == "Name", e => e.Name)
+					  .OrderByIf(columnSort == "Position", e => e.Position)
+					  .OrderByIf(columnSort == "Id", e => e.Id)
+					  .SkipIf(isPaged, pageNumber * resultsPerPage)
+					  .TakeIf(isPaged, resultsPerPage)
+					  .ToList();
+```
+
 ### If Chain
 You can use an if chain to add if statement logic to your queryable or enumerable. If chains require you to have an `Else()` call to end the statement. You can add as many `ElseIf()` conditions in between.
 
