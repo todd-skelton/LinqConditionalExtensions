@@ -1,4 +1,6 @@
+### Latest
 [![](https://img.shields.io/nuget/vpre/LinqConditionalExtensions.svg)](https://www.nuget.org/packages/LinqConditionalExtensions)
+### Stable
 [![](https://img.shields.io/nuget/v/LinqConditionalExtensions.svg)](https://www.nuget.org/packages/LinqConditionalExtensions)
 
 # LinqConditionalExtensions
