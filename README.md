@@ -16,9 +16,9 @@ Any extension for `IEnumerable<T>` and `IQueryable<T>` that returns itself can b
 Here is a sample for applying where clauses conditionally based on filters, ordering by a column, and paging the results. When using something like Entity Framework, this entire chain will be dynamically converted straight to SQL and make your query time much shorter.
 ```csharp
 var results = _context.Employees
-	.WhereIf(!string.IsNullOrWhitespace(nameFilter), e => e.Name.Contains(nameFilter))
-	.WhereIf(!string.IsNullOrWhitespace(positionFilter), e => e.Position.Contains(positionFilter))
-	.WhereIf(!string.IsNullOrWhitespace(idFilter), e => e.Id == idFilter)
+	.WhereIf(hasNameFilter, e => e.Name.Contains(nameFilter))
+	.WhereIf(hasPositionFilter, e => e.Position.Contains(positionFilter))
+	.WhereIf(hasIdFilter, e => e.Id == idFilter)
 	.OrderByIf(columnSort == "Name", e => e.Name)
 	.OrderByIf(columnSort == "Position", e => e.Position)
 	.OrderByIf(columnSort == "Id", e => e.Id)
@@ -32,8 +32,8 @@ You can do anything based on a condition with a single if statement. In this exa
 
 ```csharp
 var query = employeeDirectory
-    .If(condition, employees => employees
-        .Where(e => e.Name == "Something")
+    .If(hasNameFilter, employees => employees
+        .Where(e => e.Name.Contains(nameFilter))
         .OrderBy(e => e.Department));
 ```
 
@@ -43,17 +43,14 @@ You can use an if-chain to add if statement logic to your queryable or enumerabl
 In this sample, a position and name is being used to filter a list of employees to find only the ones who fall under them on the org chart. The CEO returns all employees. The vice president and manager are used to filter by their respective properties. Otherwise, no employees are returned by appylying a where false.
 
 ```csharp
-var position = "VP";
-var name = "Todd Skelton";
-
 var subordinates = employeeDirectory
-	.IfChain(position == "CEO", employees => employees)
+	.IfChain(position == "CEO", employees => employees) \\ All employees are under the CEO
 	.ElseIf(position == "VP", employees => employees
-		.Where(employee => employee.VicePresidentName == name))
+		.Where(employee => employee.VicePresidentName == name))	\\ Employees that have a vice president with the passed name
 	.ElseIf(position == "Manager", employees => employees
-		.Where(employee => employee.ManagerName == name))
+		.Where(employee => employee.ManagerName == name)) \\ Employees that have a manager with the passed name
 	.Else(employees => employees
-		.Where(employee => false));
+		.Where(employee => false)); \\ No employees
 ```
 
 In this sample, instead of returning the subordinates, we are just getting the count. You can do a transformation on the result. You just have to make sure each method in the chain returns the same type.
@@ -75,7 +72,6 @@ You can use a switch statement to chain together case statements. This is really
 In this example, a switch chain is being used to order results based on the column sort string.
 
 ```csharp
-var columnSort = "Id";
 var columnSort = "Name";
 
 var sortedResults = results
@@ -90,7 +86,9 @@ var sortedResults = results
 Since ordering is a common task, you can use the shorthand version with order by case. There is also a where case for quickly applying filters in a switch.
 
 ```csharp
-var sortedResults2 = results
+var columnSort = "Name";
+
+var sortedResults = results
     .Switch(columnSort)
     .OrderByCase("Name", e => e.Name)
     .OrderByCase("Position", e => e.Position)
