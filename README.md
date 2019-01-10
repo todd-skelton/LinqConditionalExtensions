@@ -87,7 +87,7 @@ var sortedResults = results
 	.Default();
 ```
 
-Since ordering is a common task, you can use the shorthand version with order by case. There is also an where case for quickly applying filters in a switch.
+Since ordering is a common task, you can use the shorthand version with order by case. There is also a where case for quickly applying filters in a switch.
 
 ```csharp
 var sortedResults2 = results

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1-dev-201901100106</Version>
+    <Version>1.1.0</Version>
     <Authors>Todd Skelton</Authors>
     <Company>Kloc Limited Company</Company>
     <Product>Linq Conditional Extensions</Product>
@@ -13,6 +13,7 @@
     <RepositoryUrl>https://github.com/xKloc/LinqConditionalExtensions</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>linq if where when then switch case extensions expressions sort filter page sorting filtering paging</PackageTags>
+    <PackageReleaseNotes>Added new where and order by case extensions for switch chains.</PackageReleaseNotes>
   </PropertyGroup>
 
   <Target Name="PushNuGetPackage" AfterTargets="GenerateNuspec" Condition="'$(Configuration)'=='Release'">
