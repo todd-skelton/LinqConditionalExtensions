@@ -18,15 +18,15 @@ Any extension for `IEnumerable<T>` and `IQueryable<T>` that returns itself can b
 Here is a sample for applying where clauses conditionally based on filters, ordering by a column, and paging the results. When using something like Entity Framework, this entire chain will be dynamically converted straight to SQL and make your query time much shorter.
 ```csharp
 var results = _context.Employees
-					  .WhereIf(!string.IsNullOrWhitespace(nameFilter), e => e.Name.Contains(nameFilter))
-					  .WhereIf(!string.IsNullOrWhitespace(positionFilter), e => e.Position.Contains(positionFilter))
-					  .WhereIf(!string.IsNullOrWhitespace(idFilter), e => e.Id == idFilter)
-					  .OrderByIf(columnSort == "Name", e => e.Name)
-					  .OrderByIf(columnSort == "Position", e => e.Position)
-					  .OrderByIf(columnSort == "Id", e => e.Id)
-					  .SkipIf(isPaged, pageNumber * resultsPerPage)
-					  .TakeIf(isPaged, resultsPerPage)
-					  .ToList();
+	.WhereIf(!string.IsNullOrWhitespace(nameFilter), e => e.Name.Contains(nameFilter))
+	.WhereIf(!string.IsNullOrWhitespace(positionFilter), e => e.Position.Contains(positionFilter))
+	.WhereIf(!string.IsNullOrWhitespace(idFilter), e => e.Id == idFilter)
+	.OrderByIf(columnSort == "Name", e => e.Name)
+	.OrderByIf(columnSort == "Position", e => e.Position)
+	.OrderByIf(columnSort == "Id", e => e.Id)
+	.SkipIf(isPaged, pageNumber * resultsPerPage)
+	.TakeIf(isPaged, resultsPerPage)
+	.ToList();
 ```
 
 ### If Chain
@@ -38,10 +38,11 @@ In this example, a position and name is being used to filter a list of employees
 var position = "VP";
 var name = "Todd Skelton";
 
-var subordinates = employeeDirectory.IfChain(position == "CEO", employees => employees)
-                                    .ElseIf(position == "VP", employees => employees.Where(employee => employee.VicePresidentName == name))
-                                    .ElseIf(position == "Manager", employees => employees.Where(employee => employee.ManagerName == name))
-                                    .Else(employees => employees.Where(employee => false));
+var subordinates = employeeDirectory
+	.IfChain(position == "CEO", employees => employees)
+	.ElseIf(position == "VP", employees => employees.Where(employee => employee.VicePresidentName == name))
+	.ElseIf(position == "Manager", employees => employees.Where(employee => employee.ManagerName == name))
+	.Else(employees => employees.Where(employee => false));
 ```
 
 In this sample, instead of returning the subordinates, we are just getting the count. You can do a transformation on the result. You just have to make sure each method in the chain returns the same type.
@@ -50,10 +51,11 @@ In this sample, instead of returning the subordinates, we are just getting the c
 var position = "VP";
 var name = "Todd Skelton";
 
-var subordinateCount = employeeDirectory.IfChain(position == "CEO", employees => employees.Count())
-                                        .ElseIf(position == "VP", employees => employees.Where(employee => employee.VicePresidentName == name).Count())
-                                        .ElseIf(position == "Manager", employees => employees.Where(employee => employee.ManagerName == name).Count())
-                                        .Else(employees => 0);
+var subordinateCount = employeeDirectory
+	.IfChain(position == "CEO", employees => employees.Count())
+	.ElseIf(position == "VP", employees => employees.Where(employee => employee.VicePresidentName == name).Count())
+	.ElseIf(position == "Manager", employees => employees.Where(employee => employee.ManagerName == name).Count())
+	.Else(employees => 0);
 ```
 
 ### Switch
@@ -65,12 +67,13 @@ In the example, a switch chain is being used to order results based on the colum
 var columnSort = "Id";
 var columnSort = "Name";
 
-var sortedResults = results.Switch(columnSort)
-                            .Case("Name", set => set.OrderBy(e => e.Name))
-                            .Case("Position", set => set.OrderBy(e => e.Position))
-                            .Case("VicePresidentName", set => set.OrderBy(e => e.VicePresidentName))
-                            .Case("ManagerName", set => set.OrderBy(e => e.ManagerName))
-                            .Default();
+var sortedResults = results
+	.Switch(columnSort)
+    .Case("Name", set => set.OrderBy(e => e.Name))
+    .Case("Position", set => set.OrderBy(e => e.Position))
+    .Case("VicePresidentName", set => set.OrderBy(e => e.VicePresidentName))
+    .Case("ManagerName", set => set.OrderBy(e => e.ManagerName))
+    .Default();
 ```
 
 You can also do a transformation in the switch chain, but you'll have to specify the type.
@@ -80,7 +83,8 @@ In this example, the types are string for the switch, Employee for the source, a
 ```csharp
 var department = "IT";
 
-var total = employeeDirectory.Switch<string, Employee, int>(department)
-                                .Case("IT", set => set.Where(e => e.Department == "Information Technology").Count())
-                                .Default(set => 0);
+var total = employeeDirectory
+	.Switch<string, Employee, int>(department)
+	.Case("IT", set => set.Where(e => e.Department == "Information Technology").Count())
+	.Default(set => 0);
 ```
