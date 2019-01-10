@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0-dev-201901092119</Version>
+    <Authors>Todd Skelton</Authors>
+    <Company>Kloc Limited Company</Company>
+    <Product>Linq Conditional Extensions</Product>
+    <Title>Linq Conditional Extensions</Title>
+    <PackageIconUrl>https://github.com/xKloc/LinqConditionalExtensions/blob/master/logo.png?raw=true</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/xKloc/LinqConditionalExtensions</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/xKloc/LinqConditionalExtensions</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>linq if where when then switch case extensions expressions sort filter page sorting filtering paging</PackageTags>
+  </PropertyGroup>
+
+  <Target Name="PushNuGetPackage" AfterTargets="GenerateNuspec" Condition="'$(Configuration)'=='Release'">
+    <Exec Command="C:\Nuget\NuGet.exe push -Source https://api.nuget.org/v3/index.json $(ProjectDir)bin\$(Configuration)\$(AssemblyName).$(Version).nupkg"></Exec>
+  </Target>
+</Project>

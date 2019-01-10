@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>System.Linq</RootNamespace>
+    <DocumentationFile>C:\Users\admin\Source\Repos\LinqConditionalExtensions\src\LinqConditionalExtensions\LinqConditionalExtensions.xml</DocumentationFile>
+    <Description>These extensions make it easy to chain Linq expressions based on conditions—useful for sorting, filtering, and paging.</Description>
+  </PropertyGroup>
+</Project>
