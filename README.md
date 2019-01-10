@@ -10,8 +10,7 @@ These extensions make it easy to chain Linq expressions based on conditions—us
 ### .NET CLI
 `dotnet add package LinqConditionalExtensions`
 
-## How to Use
-### Conditionals
+## Conditionals
 Any extension for `IEnumerable<T>` and `IQueryable<T>` that returns itself can be called with `If` appended to it and be conditionally applied.
 
 Here is a sample for applying where clauses conditionally based on filters, ordering by a column, and paging the results. When using something like Entity Framework, this entire chain will be dynamically converted straight to SQL and make your query time much shorter.
@@ -28,10 +27,20 @@ var results = _context.Employees
 	.ToList();
 ```
 
-### If Chain
-You can use an if chain to add if statement logic to your queryable or enumerable. If chains require you to have an `Else()` call to end the statement. You can add as many `ElseIf()` conditions in between.
+## If
+You can do anything based on a condition with a single if statement. In this example, if the condition is true, a where clause and order by clause is being applied to the list of employees.
 
-In this example, a position and name is being used to filter a list of employees to find only the ones who fall under them on the org chart. The CEO returns all employees. The vice president and manager are used to filter by their respective properties. Otherwise, no employees are returned by appylying a where false.
+```csharp
+var query = employeeDirectory
+    .If(condition, employees => employees
+        .Where(e => e.Name == "Something")
+        .OrderBy(e => e.Department));
+```
+
+## If-chain
+You can use an if-chain to add if statement logic to your queryable or enumerable. If chains require you to have an `Else()` call to end the statement. You can add as many `ElseIf()` conditions in between.
+
+In this sample, a position and name is being used to filter a list of employees to find only the ones who fall under them on the org chart. The CEO returns all employees. The vice president and manager are used to filter by their respective properties. Otherwise, no employees are returned by appylying a where false.
 
 ```csharp
 var position = "VP";
@@ -39,9 +48,12 @@ var name = "Todd Skelton";
 
 var subordinates = employeeDirectory
 	.IfChain(position == "CEO", employees => employees)
-	.ElseIf(position == "VP", employees => employees.Where(employee => employee.VicePresidentName == name))
-	.ElseIf(position == "Manager", employees => employees.Where(employee => employee.ManagerName == name))
-	.Else(employees => employees.Where(employee => false));
+	.ElseIf(position == "VP", employees => employees
+		.Where(employee => employee.VicePresidentName == name))
+	.ElseIf(position == "Manager", employees => employees
+		.Where(employee => employee.ManagerName == name))
+	.Else(employees => employees
+		.Where(employee => false));
 ```
 
 In this sample, instead of returning the subordinates, we are just getting the count. You can do a transformation on the result. You just have to make sure each method in the chain returns the same type.
@@ -57,10 +69,10 @@ var subordinateCount = employeeDirectory
 	.Else(employees => 0);
 ```
 
-### Switch
+## Switch
 You can use a switch statement to chain together case statements. This is really useful for applying sorts.
 
-In the example, a switch chain is being used to order results based on the column sort string.
+In this example, a switch chain is being used to order results based on the column sort string.
 
 ```csharp
 var columnSort = "Id";
@@ -73,6 +85,18 @@ var sortedResults = results
 	.Case("VicePresidentName", set => set.OrderBy(e => e.VicePresidentName))
 	.Case("ManagerName", set => set.OrderBy(e => e.ManagerName))
 	.Default();
+```
+
+Since ordering is a common task, you can use the shorthand version with order by case. There is also an where case for quickly applying filters in a switch.
+
+```csharp
+var sortedResults2 = results
+    .Switch(columnSort)
+    .OrderByCase("Name", e => e.Name)
+    .OrderByCase("Position", e => e.Position)
+    .OrderByCase("VicePresidentName", e => e.VicePresidentName)
+    .OrderByCase("ManagerName", e => e.ManagerName)
+    .Default();
 ```
 
 You can also do a transformation in the switch chain, but you'll have to specify the type.

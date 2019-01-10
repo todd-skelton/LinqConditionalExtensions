@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace SampleApp
@@ -33,6 +32,14 @@ namespace SampleApp
                                         .Case("ManagerName", set => set.OrderBy(e => e.ManagerName))
                                         .Default();
 
+            var sortedResults2 = results
+                .Switch(columnSort)
+                .OrderByCase("Name", e => e.Name)
+                .OrderByCase("Position", e => e.Position)
+                .OrderByCase("VicePresidentName", e => e.VicePresidentName)
+                .OrderByCase("ManagerName", e => e.ManagerName)
+                .Default();
+
             var department = "IT";
 
             int total = employeeDirectory.Switch<string, Employee, int>(department)
@@ -40,6 +47,12 @@ namespace SampleApp
                                          .Case("HR", set => set.Where(e => e.Department == "Human Resources").Count())
                                          .Default(set => 0);
 
+            var condition = true;
+
+            var query = employeeDirectory
+                .If(condition, employees => employees
+                    .Where(e => e.Name == "Something")
+                    .OrderBy(e => e.Department));
         }
 
         public class Employee
