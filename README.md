@@ -69,11 +69,11 @@ var columnSort = "Name";
 
 var sortedResults = results
 	.Switch(columnSort)
-    .Case("Name", set => set.OrderBy(e => e.Name))
-    .Case("Position", set => set.OrderBy(e => e.Position))
-    .Case("VicePresidentName", set => set.OrderBy(e => e.VicePresidentName))
-    .Case("ManagerName", set => set.OrderBy(e => e.ManagerName))
-    .Default();
+	.Case("Name", set => set.OrderBy(e => e.Name))
+	.Case("Position", set => set.OrderBy(e => e.Position))
+	.Case("VicePresidentName", set => set.OrderBy(e => e.VicePresidentName))
+	.Case("ManagerName", set => set.OrderBy(e => e.ManagerName))
+	.Default();
 ```
 
 You can also do a transformation in the switch chain, but you'll have to specify the type.
