@@ -40,7 +40,7 @@ var query = employeeDirectory
 ## If-chain
 You can use an if-chain to add if statement logic to your queryable or enumerable. If chains require you to have an `Else()` call to end the statement. You can add as many `ElseIf()` conditions in between.
 
-In this sample, a position and name is being used to filter a list of employees to find only the ones who fall under them on the org chart. The CEO returns all employees. The vice president and manager are used to filter by their respective properties. Otherwise, no employees are returned by appylying a where false.
+In this sample, a position and name is being used to filter a list of employees to find only the ones who fall under them on the org chart. The CEO returns all employees. The vice president and manager are used to filter by their respective properties. Otherwise, no employees are returned by applying a where false.
 
 ```csharp
 var subordinates = employeeDirectory
