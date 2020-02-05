@@ -38,10 +38,28 @@ namespace System.Linq
         public static ISwitchableQueryable<TSwitch, TSource> OrderByDescendingCase<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, TSwitch match, Expression<Func<TSource, TKey>> keySelector)
             => switchable.IsMet ? switchable : new SwitchableQueryable<TSwitch, TSource>(switchable.Source, switchable.Switch, e => e.OrderByDescending(keySelector), match.Equals(switchable.Switch));
 
+        public static IQueryable<TSource> OrderByDefault<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : switchable.Source.OrderBy(keySelector, comparer);
+
+        public static IQueryable<TSource> OrderByDefault<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, Expression<Func<TSource, TKey>> keySelector)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : switchable.Source.OrderBy(keySelector);
+
+        public static IQueryable<TSource> OrderByDescendingDefault<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : switchable.Source.OrderByDescending(keySelector, comparer);
+
+        public static IQueryable<TSource> OrderByDescendingDefault<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, Expression<Func<TSource, TKey>> keySelector)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : switchable.Source.OrderByDescending(keySelector);
+
         public static ISwitchableQueryable<TSwitch, TSource> WhereCase<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, TSwitch match, Expression<Func<TSource, int, bool>> predicate)
             => switchable.IsMet ? switchable : new SwitchableQueryable<TSwitch, TSource>(switchable.Source, switchable.Switch, e => e.Where(predicate), match.Equals(switchable.Switch));
 
         public static ISwitchableQueryable<TSwitch, TSource> WhereCase<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, TSwitch match, Expression<Func<TSource, bool>> predicate)
             => switchable.IsMet ? switchable : new SwitchableQueryable<TSwitch, TSource>(switchable.Source, switchable.Switch, e => e.Where(predicate), match.Equals(switchable.Switch));
+
+        public static IQueryable<TSource> WhereDefault<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, Expression<Func<TSource, int, bool>> predicate)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : switchable.Source.Where(predicate);
+
+        public static IQueryable<TSource> WhereDefault<TSwitch, TSource, TKey>(this ISwitchableQueryable<TSwitch, TSource> switchable, Expression<Func<TSource, bool>> predicate)
+            => switchable.IsMet ? switchable.Expression.Invoke(switchable.Source) : switchable.Source.Where(predicate);
     }
 }
