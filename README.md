@@ -92,6 +92,8 @@ var sortedResults = results
 
 Also, there are overloads to use lamba expressions for each case if you need to do something more complex. For example, you can use a class or tuple to include the direction of a sort.
 
+**Note:** Only the first true condition will be applied. The rest of the conditions will be ignored. If there is overlap, make sure you order your conditions appropriately.
+
 ```csharp
 var sort = (column: "Name", direction: "asc");
 
