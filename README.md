@@ -90,6 +90,24 @@ var sortedResults = results
     .Default();
 ```
 
+Also, there are overloads to use lamba expressions for each case if you need to do something more complex. For example, you can use a class or tuple to include the direction of a sort.
+
+```csharp
+var sort = (column: "Name", direction: "asc");
+
+var sortedResults3 = employeeDirectory
+    .Switch(sort)
+    .OrderByCase(e => e.column == "Name" && e.direction == "asc", e => e.Name)
+    .OrderByDescendingCase(e => e.column == "Name" && e.direction == "desc", e => e.Name)
+    .OrderByCase(e => e.column == "Position" && e.direction == "asc", e => e.Position)
+    .OrderByDescendingCase(e => e.column == "Position" && e.direction == "desc", e => e.Position)
+    .OrderByCase(e => e.column == "VicePresidentName" && e.direction == "asc", e => e.VicePresidentName)
+    .OrderByDescendingCase(e => e.column == "VicePresidentName" && e.direction == "desc", e => e.VicePresidentName)
+    .OrderByCase(e => e.column == "ManagerName" && e.direction == "asc", e => e.VicePresidentName)
+    .OrderByDescendingCase(e => e.column == "ManagerName" && e.direction == "desc", e => e.VicePresidentName)
+    .OrderByDefault(e => e.Name);
+```
+
 You can also do a transformation in the switch chain, but you'll have to specify the type.
 
 In this example, the types are string for the switch, Employee for the source, and int for the result.
